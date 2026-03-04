@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geografi-Tränaren</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2F2F2F;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; background: #fdfdfd; overflow: hidden; }
+        
+        #header { 
+            background: var(--primary); 
+            color: white; 
+            padding: 10px; 
+            text-align: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 60px;
+        }
+
+        /* Tillbaka-knappen */
+        #back-btn {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        #map { flex-grow: 1; width: 100%; border-bottom: 5px solid var(--secondary); }
+        #controls { background: white; padding: 15px; text-align: center; z-index: 1000; }
+        
+        select, button { padding: 12px 20px; font-size: 16px; border-radius: 25px; border: 2px solid #eee; margin: 5px; outline: none; transition: 0.3s; }
+        button { background: var(--secondary); color: white; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        button:hover { transform: scale(1.05); background: #3db7af; }
+        
+        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: var(--dark); 
+                   display:flex; justify-content:center; align-items:center; z-index:2000; color:white; flex-direction:column; text-align: center; }
+        .hidden { display: none !important; }
+        
+        #feedback { font-weight: bold; margin-top: 10px; height: 25px; font-size: 1.2em; }
+        .correct { color: #2ecc71; }
+        .wrong { color: #e74c3c; }
+        .cat-btn { background: var(--accent); color: var(--dark); min-width: 200px; margin: 10px; font-size: 1.1em; border: none; }
+        
+        #stat-bar { font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 15px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <button id="back-btn" class="hidden" onclick="goBack()">← Meny</button>
+    <h2 id="current-task" style="margin:0;">Geografi-Mästaren 🌍</h2>
+    <div id="stat-bar" class="hidden">Poäng: <span id="score">0</span> / <span id="total">0</span></div>
+</div>
+
+<div id="map"></div>
+
+<div id="controls" class="hidden">
+    <p style="margin-top:0; color: #666;">Vilken plats pekar pilen på?</p>
+    <select id="name-dropdown">
+        <option value="">-- Välj ett svar --</option>
+    </select>
+    <button onclick="checkAnswer()">Svara!</button>
+    <div id="feedback"></div>
+</div>
+
+<!-- Startmeny -->
+<div id="start-menu" class="overlay">
+    <h1 style="font-size: 2.5em; color: var(--accent); margin-bottom: 10px;">VÄLJ KATEGORI</h1>
+    <p style="margin-bottom: 20px;">Träna inför provet (inga namn på kartan)</p>
+    <button class="cat-btn" onclick="initGame('Länder')">Länder 🚩</button>
+    <button class="cat-btn" onclick="initGame('Städer')">Städer 🏙️</button>
+    <button class="cat-btn" onclick="initGame('Natur')">Berg & Öknar 🏔️</button>
+    <button class="cat-btn" onclick="initGame('Vatten')">Hav & Floder 🌊</button>
+</div>
+
+<!-- Resultatskärm -->
+<div id="result-screen" class="overlay hidden">
+    <h1 style="font-size: 3em;">Bra jobbat! 🎉</h1>
+    <p id="final-stats" style="font-size: 2em; margin-bottom: 30px;"></p>
+    <button onclick="goBack()" style="background: var(--accent); color: black;">Tillbaka till menyn</button>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // DATA
+    const locations = [
+        // LÄNDER
+        { name: "Ryssland", lat: 61.5, lng: 105.3, cat: "Länder" },
+        { name: "Frankrike", lat: 46.2, lng: 2.2, cat: "Länder" },
+        { name: "Italien", lat: 41.8, lng: 12.5, cat: "Länder" },
+        { name: "Island", lat: 64.9, lng: -18.1, cat: "Länder" },
+        { name: "Kina", lat: 35.8, lng: 104.1, cat: "Länder" },
+        { name: "Indien", lat: 20.5, lng: 78.9, cat: "Länder" },
+        { name: "Japan", lat: 36.2, lng: 138.2, cat: "Länder" },
+        { name: "Vietnam", lat: 14.0, lng: 108.2, cat: "Länder" },
+        { name: "Australien", lat: -25.2, lng: 133.7, cat: "Länder" },
+        { name: "Nya Zeeland", lat: -40.9, lng: 174.8, cat: "Länder" },
+        { name: "Brasilien", lat: -14.2, lng: -51.9, cat: "Länder" },
+        { name: "Argentina", lat: -38.4, lng: -63.6, cat: "Länder" },
+        { name: "Peru", lat: -9.1, lng: -75.0, cat: "Länder" },
+        { name: "Chile", lat: -35.6, lng: -71.5, cat: "Länder" },
+        { name: "USA", lat: 37.0, lng: -95.7, cat: "Länder" },
+        { name: "Kanada", lat: 56.1, lng: -106.3, cat: "Länder" },
+        { name: "Mexiko", lat: 23.6, lng: -102.5, cat: "Länder" },
+        { name: "Sydafrika", lat: -30.5, lng: 22.9, cat: "Länder" },
+        { name: "Egypten", lat: 26.8, lng: 30.8, cat: "Länder" },
+        { name: "Sudan", lat: 12.8, lng: 30.2, cat: "Länder" },
+        { name: "Saudiarabien", lat: 23.8, lng: 45.0, cat: "Länder" },
+        
+        // STÄDER
+        { name: "Moskva", lat: 55.7, lng: 37.6, cat: "Städer" },
+        { name: "Greenwich", lat: 51.4, lng: 0.0, cat: "Städer" },
+        { name: "Berlin", lat: 52.5, lng: 13.4, cat: "Städer" },
+        { name: "Sao Paulo", lat: -23.5, lng: -46.6, cat: "Städer" },
+        { name: "Buenos Aires", lat: -34.6, lng: -58.3, cat: "Städer" },
+        { name: "Lima", lat: -12.0, lng: -77.0, cat: "Städer" },
+        { name: "Tokyo", lat: 35.6, lng: 139.6, cat: "Städer" },
+        { name: "Beijing", lat: 39.9, lng: 116.4, cat: "Städer" },
+        { name: "Mumbai", lat: 19.0, lng: 72.8, cat: "Städer" },
+        { name: "Kairo", lat: 30.0, lng: 31.2, cat: "Städer" },
+        { name: "Lagos", lat: 6.5, lng: 3.3, cat: "Städer" },
+        { name: "Sydney", lat: -33.8, lng: 151.2, cat: "Städer" },
+        { name: "Perth", lat: -31.9, lng: 115.8, cat: "Städer" },
+        { name: "Wellington", lat: -41.2, lng: 174.7, cat: "Städer" },
+        { name: "New York", lat: 40.7, lng: -74.0, cat: "Städer" },
+        { name: "Mexico City", lat: 19.4, lng: -99.1, cat: "Städer" },
+
+        // NATUR
+        { name: "Anderna", lat: -32.6, lng: -70.0, cat: "Natur" },
+        { name: "Himalaya", lat: 27.9, lng: 86.9, cat: "Natur" },
+        { name: "Alperna", lat: 45.8, lng: 6.8, cat: "Natur" },
+        { name: "Skanderna", lat: 61.6, lng: 8.3, cat: "Natur" },
+        { name: "Kebnekaise", lat: 67.9, lng: 18.5, cat: "Natur" },
+        { name: "Kilimanjaro", lat: -3.0, lng: 37.3, cat: "Natur" },
+        { name: "Sahara", lat: 23.0, lng: 12.0, cat: "Natur" },
+        { name: "Gobiöknen", lat: 42.5, lng: 105.0, cat: "Natur" },
+        { name: "Namiböknen", lat: -24.7, lng: 15.2, cat: "Natur" },
+
+        // VATTEN
+        { name: "Stilla Havet", lat: 0, lng: -160, cat: "Vatten" },
+        { name: "Atlanten", lat: 25, lng: -40, cat: "Vatten" },
+        { name: "Indiska Oceanen", lat: -20, lng: 80, cat: "Vatten" },
+        { name: "Röda Havet", lat: 20, lng: 38, cat: "Vatten" },
+        { name: "Ishavet (Norra)", lat: 82, lng: 0, cat: "Vatten" },
+        { name: "Ishavet (Södra)", lat: -75, lng: 0, cat: "Vatten" },
+        { name: "Nilen", lat: 24.0, lng: 32.8, cat: "Vatten" },
+        { name: "Amazonas", lat: -3.4, lng: -60.0, cat: "Vatten" },
+        { name: "Ganges", lat: 25.3, lng: 83.0, cat: "Vatten" },
+        { name: "Mekongfloden", lat: 15.0, lng: 105.0, cat: "Vatten" }
+    ];
+
+    let map, currentCategoryList, currentItem, marker;
+    let score = 0;
+    let questionIndex = 0;
+
+    // KARTA UTAN TEXT
+    map = L.map('map', {zoomControl: false}).setView([20, 0], 2);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; CARTO',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
+
+    function initGame(category) {
+        currentCategoryList = locations.filter(l => l.cat === category);
+        currentCategoryList.sort(() => Math.random() - 0.5);
+        
+        const dropdown = document.getElementById('name-dropdown');
+        dropdown.innerHTML = '<option value="">-- Välj ett svar --</option>';
+        
+        const sortedNames = [...currentCategoryList].sort((a,b) => a.name.localeCompare(b.name));
+        sortedNames.forEach(loc => {
+            const opt = document.createElement('option');
+            opt.value = loc.name;
+            opt.innerText = loc.name;
+            dropdown.appendChild(opt);
+        });
+
+        // Visa UI
+        document.getElementById('start-menu').classList.add('hidden');
+        document.getElementById('result-screen').classList.add('hidden');
+        document.getElementById('controls').classList.remove('hidden');
+        document.getElementById('stat-bar').classList.remove('hidden');
+        document.getElementById('back-btn').classList.remove('hidden');
+        
+        score = 0;
+        questionIndex = 0;
+        document.getElementById('total').innerText = currentCategoryList.length;
+        
+        nextQuestion();
+    }
+
+    function goBack() {
+        // Återställ allt UI
+        document.getElementById('start-menu').classList.remove('hidden');
+        document.getElementById('controls').classList.add('hidden');
+        document.getElementById('stat-bar').classList.add('hidden');
+        document.getElementById('back-btn').classList.add('hidden');
+        document.getElementById('result-screen').classList.add('hidden');
+        
+        // Ta bort markör och nollställ karta
+        if (marker) map.removeLayer(marker);
+        map.flyTo([20, 0], 2);
+    }
+
+    function nextQuestion() {
+        if (questionIndex >= currentCategoryList.length) {
+            showResults();
+            return;
+        }
+
+        currentItem = currentCategoryList[questionIndex];
+        document.getElementById('score').innerText = score;
+        document.getElementById('feedback').innerText = "";
+        document.getElementById('name-dropdown').value = "";
+
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([currentItem.lat, currentItem.lng]).addTo(map);
+        
+        let zoomLevel = 3;
+        if (currentItem.cat === "Städer") zoomLevel = 4;
+        if (currentItem.name.includes("Havet")) zoomLevel = 2;
+
+        map.flyTo([currentItem.lat, currentItem.lng], zoomLevel);
+    }
+
+    function checkAnswer() {
+        const selected = document.getElementById('name-dropdown').value;
+        const feedback = document.getElementById('feedback');
+        
+        if (!selected) return;
+
+        if (selected === currentItem.name) {
+            score++;
+            feedback.innerText = "Snyggt! Rätt svar! ⭐";
+            feedback.className = "correct";
+        } else {
+            feedback.innerText = "Oj! Det var " + currentItem.name;
+            feedback.className = "wrong";
+        }
+
+        questionIndex++;
+        setTimeout(() => {
+            // Kolla så att vi inte har tryckt på "tillbaka" under väntetiden
+            if (!document.getElementById('controls').classList.contains('hidden')) {
+                nextQuestion();
+            }
+        }, 1800);
+    }
+
+    function showResults() {
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('controls').classList.add('hidden');
+        document.getElementById('final-stats').innerText = `${score} av ${currentCategoryList.length} rätt!`;
+    }
+</script>
+
+</body>
+</html>
