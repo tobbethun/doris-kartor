@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Geografi-Tränaren</title>
+    <title>Europa-Geografi Åk 7</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -45,6 +45,9 @@
         border: 1px solid white;
         padding: 8px 12px;
         font-size: 14px;
+        border-radius: 15px;
+        color: white;
+        cursor: pointer;
       }
 
       #map {
@@ -116,7 +119,7 @@
       .cat-btn {
         background: var(--accent);
         color: var(--dark);
-        min-width: 200px;
+        min-width: 220px;
         margin: 10px;
         font-size: 1.1em;
         border: none;
@@ -135,7 +138,7 @@
   <body>
     <div id="header">
       <button id="back-btn" class="hidden" onclick="goBack()">← Meny</button>
-      <h2 id="current-task" style="margin: 0">Geografi-Mästaren 🌍</h2>
+      <h2 id="current-task" style="margin: 0">Europakartan 🌍</h2>
       <div id="stat-bar" class="hidden">
         Poäng: <span id="score">0</span> / <span id="total">0</span>
       </div>
@@ -155,17 +158,17 @@
     <!-- Startmeny -->
     <div id="start-menu" class="overlay">
       <h1 style="font-size: 2.5em; color: var(--accent); margin-bottom: 10px">
-        VÄLJ KATEGORI
+        EUROPAS GEOGRAFI
       </h1>
-      <p style="margin-bottom: 20px">
-        Träna inför provet (inga namn på kartan)
-      </p>
+      <p style="margin-bottom: 20px">Välj kategori och träna inför provet!</p>
       <button class="cat-btn" onclick="initGame('Länder')">Länder 🚩</button>
-      <button class="cat-btn" onclick="initGame('Städer')">Städer 🏙️</button>
-      <button class="cat-btn" onclick="initGame('Natur')">
-        Berg & Öknar 🏔️
+      <button class="cat-btn" onclick="initGame('Huvudstäder')">
+        Huvudstäder 🏙️
       </button>
-      <button class="cat-btn" onclick="initGame('Vatten')">
+      <button class="cat-btn" onclick="initGame('Bergskedjor')">
+        Bergskedjor 🏔️
+      </button>
+      <button class="cat-btn" onclick="initGame('Hav & Floder')">
         Hav & Floder 🌊
       </button>
     </div>
@@ -184,79 +187,73 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-      // DATA
+      // EUROPA-DATA
       const locations = [
         // LÄNDER
-        { name: "Ryssland", lat: 61.5, lng: 105.3, cat: "Länder" },
-        { name: "Frankrike", lat: 46.2, lng: 2.2, cat: "Länder" },
-        { name: "Italien", lat: 41.8, lng: 12.5, cat: "Länder" },
-        { name: "Island", lat: 64.9, lng: -18.1, cat: "Länder" },
-        { name: "Kina", lat: 35.8, lng: 104.1, cat: "Länder" },
-        { name: "Indien", lat: 20.5, lng: 78.9, cat: "Länder" },
-        { name: "Japan", lat: 36.2, lng: 138.2, cat: "Länder" },
-        { name: "Vietnam", lat: 14.0, lng: 108.2, cat: "Länder" },
-        { name: "Australien", lat: -25.2, lng: 133.7, cat: "Länder" },
-        { name: "Nya Zeeland", lat: -40.9, lng: 174.8, cat: "Länder" },
-        { name: "Brasilien", lat: -14.2, lng: -51.9, cat: "Länder" },
-        { name: "Argentina", lat: -38.4, lng: -63.6, cat: "Länder" },
-        { name: "Peru", lat: -9.1, lng: -75.0, cat: "Länder" },
-        { name: "Chile", lat: -35.6, lng: -71.5, cat: "Länder" },
-        { name: "USA", lat: 37.0, lng: -95.7, cat: "Länder" },
-        { name: "Kanada", lat: 56.1, lng: -106.3, cat: "Länder" },
-        { name: "Mexiko", lat: 23.6, lng: -102.5, cat: "Länder" },
-        { name: "Sydafrika", lat: -30.5, lng: 22.9, cat: "Länder" },
-        { name: "Egypten", lat: 26.8, lng: 30.8, cat: "Länder" },
-        { name: "Sudan", lat: 12.8, lng: 30.2, cat: "Länder" },
-        { name: "Saudiarabien", lat: 23.8, lng: 45.0, cat: "Länder" },
+        { name: "Sverige", lat: 62.0, lng: 15.0, cat: "Länder" },
+        { name: "Norge", lat: 61.0, lng: 8.0, cat: "Länder" },
+        { name: "Finland", lat: 64.0, lng: 26.0, cat: "Länder" },
+        { name: "Danmark", lat: 56.0, lng: 10.0, cat: "Länder" },
+        { name: "Storbritannien", lat: 54.0, lng: -2.0, cat: "Länder" },
+        { name: "Irland", lat: 53.4, lng: -7.5, cat: "Länder" },
+        { name: "Frankrike", lat: 46.5, lng: 2.5, cat: "Länder" },
+        { name: "Tyskland", lat: 51.2, lng: 10.4, cat: "Länder" },
+        { name: "Spanien", lat: 40.0, lng: -4.0, cat: "Länder" },
+        { name: "Portugal", lat: 39.5, lng: -8.0, cat: "Länder" },
+        { name: "Italien", lat: 42.5, lng: 12.5, cat: "Länder" },
+        { name: "Grekland", lat: 39.0, lng: 22.0, cat: "Länder" },
+        { name: "Polen", lat: 52.0, lng: 19.0, cat: "Länder" },
+        { name: "Ukraina", lat: 49.0, lng: 31.0, cat: "Länder" },
+        { name: "Rumänien", lat: 46.0, lng: 25.0, cat: "Länder" },
+        { name: "Nederländerna", lat: 52.2, lng: 5.3, cat: "Länder" },
+        { name: "Schweiz", lat: 46.8, lng: 8.2, cat: "Länder" },
+        { name: "Österrike", lat: 47.5, lng: 14.5, cat: "Länder" },
 
-        // STÄDER
-        { name: "Moskva", lat: 55.7, lng: 37.6, cat: "Städer" },
-        { name: "Greenwich", lat: 51.4, lng: 0.0, cat: "Städer" },
-        { name: "Berlin", lat: 52.5, lng: 13.4, cat: "Städer" },
-        { name: "Sao Paulo", lat: -23.5, lng: -46.6, cat: "Städer" },
-        { name: "Buenos Aires", lat: -34.6, lng: -58.3, cat: "Städer" },
-        { name: "Lima", lat: -12.0, lng: -77.0, cat: "Städer" },
-        { name: "Tokyo", lat: 35.6, lng: 139.6, cat: "Städer" },
-        { name: "Beijing", lat: 39.9, lng: 116.4, cat: "Städer" },
-        { name: "Mumbai", lat: 19.0, lng: 72.8, cat: "Städer" },
-        { name: "Kairo", lat: 30.0, lng: 31.2, cat: "Städer" },
-        { name: "Lagos", lat: 6.5, lng: 3.3, cat: "Städer" },
-        { name: "Sydney", lat: -33.8, lng: 151.2, cat: "Städer" },
-        { name: "Perth", lat: -31.9, lng: 115.8, cat: "Städer" },
-        { name: "Wellington", lat: -41.2, lng: 174.7, cat: "Städer" },
-        { name: "New York", lat: 40.7, lng: -74.0, cat: "Städer" },
-        { name: "Mexico City", lat: 19.4, lng: -99.1, cat: "Städer" },
+        // HUVUDSTÄDER
+        { name: "Stockholm", lat: 59.329, lng: 18.068, cat: "Huvudstäder" },
+        { name: "Oslo", lat: 59.913, lng: 10.752, cat: "Huvudstäder" },
+        { name: "Helsingfors", lat: 60.169, lng: 24.938, cat: "Huvudstäder" },
+        { name: "Köpenhamn", lat: 55.676, lng: 12.568, cat: "Huvudstäder" },
+        { name: "London", lat: 51.507, lng: -0.127, cat: "Huvudstäder" },
+        { name: "Paris", lat: 48.856, lng: 2.352, cat: "Huvudstäder" },
+        { name: "Berlin", lat: 52.52, lng: 13.405, cat: "Huvudstäder" },
+        { name: "Madrid", lat: 40.416, lng: -3.703, cat: "Huvudstäder" },
+        { name: "Rom", lat: 41.902, lng: 12.496, cat: "Huvudstäder" },
+        { name: "Aten", lat: 37.983, lng: 23.727, cat: "Huvudstäder" },
+        { name: "Warszawa", lat: 52.229, lng: 21.012, cat: "Huvudstäder" },
+        { name: "Kyiv", lat: 50.45, lng: 30.523, cat: "Huvudstäder" },
 
-        // NATUR
-        { name: "Anderna", lat: -32.6, lng: -70.0, cat: "Natur" },
-        { name: "Himalaya", lat: 27.9, lng: 86.9, cat: "Natur" },
-        { name: "Alperna", lat: 45.8, lng: 6.8, cat: "Natur" },
-        { name: "Skanderna", lat: 61.6, lng: 8.3, cat: "Natur" },
-        { name: "Kebnekaise", lat: 67.9, lng: 18.5, cat: "Natur" },
-        { name: "Kilimanjaro", lat: -3.0, lng: 37.3, cat: "Natur" },
-        { name: "Sahara", lat: 23.0, lng: 12.0, cat: "Natur" },
-        { name: "Gobiöknen", lat: 42.5, lng: 105.0, cat: "Natur" },
-        { name: "Namiböknen", lat: -24.7, lng: 15.2, cat: "Natur" },
+        // BERGSKEDJOR
+        { name: "Alperna", lat: 46.5, lng: 9.5, cat: "Bergskedjor" },
+        { name: "Pyrenéerna", lat: 42.6, lng: 1.0, cat: "Bergskedjor" },
+        {
+          name: "Skanderna (Fjällkedjan)",
+          lat: 63.0,
+          lng: 13.0,
+          cat: "Bergskedjor",
+        },
+        { name: "Karpaterna", lat: 47.0, lng: 25.0, cat: "Bergskedjor" },
+        { name: "Apenninerna", lat: 43.0, lng: 12.5, cat: "Bergskedjor" },
+        { name: "Uralbergen", lat: 60.0, lng: 60.0, cat: "Bergskedjor" },
 
-        // VATTEN
-        { name: "Stilla Havet", lat: 0, lng: -160, cat: "Vatten" },
-        { name: "Atlanten", lat: 25, lng: -40, cat: "Vatten" },
-        { name: "Indiska Oceanen", lat: -20, lng: 80, cat: "Vatten" },
-        { name: "Röda Havet", lat: 20, lng: 38, cat: "Vatten" },
-        { name: "Ishavet (Norra)", lat: 82, lng: 0, cat: "Vatten" },
-        { name: "Ishavet (Södra)", lat: -75, lng: 0, cat: "Vatten" },
-        { name: "Nilen", lat: 24.0, lng: 32.8, cat: "Vatten" },
-        { name: "Amazonas", lat: -3.4, lng: -60.0, cat: "Vatten" },
-        { name: "Ganges", lat: 25.3, lng: 83.0, cat: "Vatten" },
-        { name: "Mekongfloden", lat: 15.0, lng: 105.0, cat: "Vatten" },
+        // HAV & FLODER
+        { name: "Östersjön", lat: 57.0, lng: 20.0, cat: "Hav & Floder" },
+        { name: "Medelhavet", lat: 35.0, lng: 18.0, cat: "Hav & Floder" },
+        { name: "Nordsjön", lat: 56.0, lng: 3.0, cat: "Hav & Floder" },
+        { name: "Svarta havet", lat: 43.0, lng: 34.0, cat: "Hav & Floder" },
+        { name: "Norska havet", lat: 66.0, lng: 2.0, cat: "Hav & Floder" },
+        { name: "Donau", lat: 44.2, lng: 22.4, cat: "Hav & Floder" },
+        { name: "Rhen", lat: 50.1, lng: 7.6, cat: "Hav & Floder" },
+        { name: "Volga", lat: 53.0, lng: 49.0, cat: "Hav & Floder" },
+        { name: "Seine", lat: 48.9, lng: 2.2, cat: "Hav & Floder" },
       ];
 
       let map, currentCategoryList, currentItem, marker;
       let score = 0;
       let questionIndex = 0;
 
-      // KARTA UTAN TEXT
-      map = L.map("map", { zoomControl: false }).setView([20, 0], 2);
+      // STARTA KARTAN ZOOMAD ÖVER EUROPA
+      map = L.map("map", { zoomControl: false }).setView([54, 15], 4);
       L.tileLayer(
         "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png?key=cb1_4qsc_1_57c70a56f2f227aba5db04fe",
         {
@@ -305,9 +302,9 @@
         document.getElementById("back-btn").classList.add("hidden");
         document.getElementById("result-screen").classList.add("hidden");
 
-        // Ta bort markör och nollställ karta
+        // Ta bort markör och nollställ karta över Europa
         if (marker) map.removeLayer(marker);
-        map.flyTo([20, 0], 2);
+        map.flyTo([54, 15], 4);
       }
 
       function nextQuestion() {
@@ -324,9 +321,13 @@
         if (marker) map.removeLayer(marker);
         marker = L.marker([currentItem.lat, currentItem.lng]).addTo(map);
 
-        let zoomLevel = 3;
-        if (currentItem.cat === "Städer") zoomLevel = 4;
-        if (currentItem.name.includes("Havet")) zoomLevel = 2;
+        let zoomLevel = 5;
+        if (currentItem.cat === "Huvudstäder") zoomLevel = 6;
+        if (
+          currentItem.cat === "Hav & Floder" &&
+          !currentItem.name.includes("Seine")
+        )
+          zoomLevel = 4;
 
         map.flyTo([currentItem.lat, currentItem.lng], zoomLevel);
       }
@@ -348,7 +349,6 @@
 
         questionIndex++;
         setTimeout(() => {
-          // Kolla så att vi inte har tryckt på "tillbaka" under väntetiden
           if (
             !document.getElementById("controls").classList.contains("hidden")
           ) {
