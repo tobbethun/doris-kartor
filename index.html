@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Europa-Geografi Åk 7</title>
+    <title>Europas Geografi - Gleerups</title>
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -35,7 +35,6 @@
         min-height: 60px;
       }
 
-      /* Tillbaka-knappen */
       #back-btn {
         position: absolute;
         left: 10px;
@@ -99,6 +98,8 @@
         color: white;
         flex-direction: column;
         text-align: center;
+        overflow-y: auto;
+        padding: 20px 0;
       }
       .hidden {
         display: none !important;
@@ -119,8 +120,8 @@
       .cat-btn {
         background: var(--accent);
         color: var(--dark);
-        min-width: 220px;
-        margin: 10px;
+        min-width: 260px;
+        margin: 8px;
         font-size: 1.1em;
         border: none;
       }
@@ -138,7 +139,7 @@
   <body>
     <div id="header">
       <button id="back-btn" class="hidden" onclick="goBack()">← Meny</button>
-      <h2 id="current-task" style="margin: 0">Europakartan 🌍</h2>
+      <h2 id="current-task" style="margin: 0">Europas Geografi 🌍</h2>
       <div id="stat-bar" class="hidden">
         Poäng: <span id="score">0</span> / <span id="total">0</span>
       </div>
@@ -157,19 +158,27 @@
 
     <!-- Startmeny -->
     <div id="start-menu" class="overlay">
-      <h1 style="font-size: 2.5em; color: var(--accent); margin-bottom: 10px">
+      <h1 style="font-size: 2.2em; color: var(--accent); margin-bottom: 5px">
         EUROPAS GEOGRAFI
       </h1>
-      <p style="margin-bottom: 20px">Välj kategori och träna inför provet!</p>
-      <button class="cat-btn" onclick="initGame('Länder')">Länder 🚩</button>
+      <p style="margin-bottom: 15px; color: #ccc">
+        Baserat på Gleerups konturkarta
+      </p>
+      <button class="cat-btn" onclick="initGame('Länder')">
+        Länder (47 st) 🚩
+      </button>
       <button class="cat-btn" onclick="initGame('Huvudstäder')">
-        Huvudstäder 🏙️
+        Huvudstäder (46 st) 🏙️
       </button>
+      <button class="cat-btn" onclick="initGame('Hav & Sjöar')">
+        Hav, sjöar m.m. (13 st) 🌊
+      </button>
+      <button class="cat-btn" onclick="initGame('Floder')">
+        Floder (9 st) 💧
+      </button>
+      <button class="cat-btn" onclick="initGame('Öar')">Öar (7 st) 🏝️</button>
       <button class="cat-btn" onclick="initGame('Bergskedjor')">
-        Bergskedjor 🏔️
-      </button>
-      <button class="cat-btn" onclick="initGame('Hav & Floder')">
-        Hav & Floder 🌊
+        Bergskedjor (7 st) 🏔️
       </button>
     </div>
 
@@ -187,65 +196,173 @@
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-      // EUROPA-DATA
+      // ALLA PLATSER FRÅN BÅDA GLEERUPS-KARTORNA
       const locations = [
-        // LÄNDER
-        { name: "Sverige", lat: 62.0, lng: 15.0, cat: "Länder" },
-        { name: "Norge", lat: 61.0, lng: 8.0, cat: "Länder" },
-        { name: "Finland", lat: 64.0, lng: 26.0, cat: "Länder" },
-        { name: "Danmark", lat: 56.0, lng: 10.0, cat: "Länder" },
-        { name: "Storbritannien", lat: 54.0, lng: -2.0, cat: "Länder" },
-        { name: "Irland", lat: 53.4, lng: -7.5, cat: "Länder" },
-        { name: "Frankrike", lat: 46.5, lng: 2.5, cat: "Länder" },
-        { name: "Tyskland", lat: 51.2, lng: 10.4, cat: "Länder" },
-        { name: "Spanien", lat: 40.0, lng: -4.0, cat: "Länder" },
-        { name: "Portugal", lat: 39.5, lng: -8.0, cat: "Länder" },
-        { name: "Italien", lat: 42.5, lng: 12.5, cat: "Länder" },
-        { name: "Grekland", lat: 39.0, lng: 22.0, cat: "Länder" },
-        { name: "Polen", lat: 52.0, lng: 19.0, cat: "Länder" },
-        { name: "Ukraina", lat: 49.0, lng: 31.0, cat: "Länder" },
-        { name: "Rumänien", lat: 46.0, lng: 25.0, cat: "Länder" },
-        { name: "Nederländerna", lat: 52.2, lng: 5.3, cat: "Länder" },
-        { name: "Schweiz", lat: 46.8, lng: 8.2, cat: "Länder" },
-        { name: "Österrike", lat: 47.5, lng: 14.5, cat: "Länder" },
+        // LÄNDER (KARTA 1)
+        { name: "1. Island", lat: 64.9, lng: -18.1, cat: "Länder" },
+        { name: "2. Norge", lat: 61.0, lng: 8.0, cat: "Länder" },
+        { name: "3. Sverige", lat: 62.0, lng: 15.0, cat: "Länder" },
+        { name: "4. Finland", lat: 64.0, lng: 26.0, cat: "Länder" },
+        { name: "5. Danmark", lat: 56.0, lng: 10.0, cat: "Länder" },
+        { name: "6. Estland", lat: 58.6, lng: 25.0, cat: "Länder" },
+        { name: "7. Lettland", lat: 56.9, lng: 24.6, cat: "Länder" },
+        { name: "8. Litauen", lat: 55.2, lng: 24.0, cat: "Länder" },
+        { name: "9. Irland", lat: 53.4, lng: -7.5, cat: "Länder" },
+        { name: "10. Storbritannien", lat: 54.0, lng: -2.0, cat: "Länder" },
+        { name: "11. Portugal", lat: 39.5, lng: -8.0, cat: "Länder" },
+        { name: "12. Spanien", lat: 40.0, lng: -4.0, cat: "Länder" },
+        { name: "13. Frankrike", lat: 46.5, lng: 2.5, cat: "Länder" },
+        { name: "14. Belgien", lat: 50.5, lng: 4.5, cat: "Länder" },
+        { name: "15. Nederländerna", lat: 52.2, lng: 5.3, cat: "Länder" },
+        { name: "16. Luxemburg", lat: 49.8, lng: 6.1, cat: "Länder" },
+        { name: "17. Tyskland", lat: 51.2, lng: 10.4, cat: "Länder" },
+        { name: "18. Schweiz", lat: 46.8, lng: 8.2, cat: "Länder" },
+        { name: "19. Liechtenstein", lat: 47.14, lng: 9.55, cat: "Länder" },
+        { name: "20. Monaco", lat: 43.73, lng: 7.42, cat: "Länder" },
+        { name: "21. Italien", lat: 42.5, lng: 12.5, cat: "Länder" },
+        { name: "22. Österrike", lat: 47.5, lng: 14.5, cat: "Länder" },
+        { name: "23. Tjeckien", lat: 49.8, lng: 15.5, cat: "Länder" },
+        { name: "24. Polen", lat: 52.0, lng: 19.0, cat: "Länder" },
+        { name: "25. Belarus", lat: 53.7, lng: 27.9, cat: "Länder" },
+        { name: "26. Ukraina", lat: 49.0, lng: 31.0, cat: "Länder" },
+        { name: "27. Slovakien", lat: 48.7, lng: 19.5, cat: "Länder" },
+        { name: "28. Ungern", lat: 47.1, lng: 19.5, cat: "Länder" },
+        { name: "29. Rumänien", lat: 46.0, lng: 25.0, cat: "Länder" },
+        { name: "30. Moldavien", lat: 47.0, lng: 28.5, cat: "Länder" },
+        { name: "31. Slovenien", lat: 46.1, lng: 15.0, cat: "Länder" },
+        { name: "32. Kroatien", lat: 45.1, lng: 15.2, cat: "Länder" },
+        {
+          name: "33. Bosnien-Hercegovina",
+          lat: 43.9,
+          lng: 17.7,
+          cat: "Länder",
+        },
+        { name: "34. Serbien", lat: 44.0, lng: 21.0, cat: "Länder" },
+        { name: "35. Montenegro", lat: 42.7, lng: 19.3, cat: "Länder" },
+        { name: "36. Bulgarien", lat: 42.7, lng: 25.5, cat: "Länder" },
+        { name: "37. Albanien", lat: 41.1, lng: 20.1, cat: "Länder" },
+        { name: "38. Kosovo", lat: 42.6, lng: 20.9, cat: "Länder" },
+        { name: "39. Nordmakedonien", lat: 41.6, lng: 21.7, cat: "Länder" },
+        { name: "40. Grekland", lat: 39.0, lng: 22.0, cat: "Länder" },
+        { name: "41. Turkiet", lat: 39.0, lng: 35.0, cat: "Länder" },
+        { name: "42. Malta", lat: 35.9, lng: 14.4, cat: "Länder" },
+        { name: "43. Ryssland", lat: 55.0, lng: 40.0, cat: "Länder" },
+        { name: "44. Cypern", lat: 35.1, lng: 33.4, cat: "Länder" },
+        { name: "45. Andorra", lat: 42.5, lng: 1.5, cat: "Länder" },
+        { name: "46. San Marino", lat: 43.94, lng: 12.45, cat: "Länder" },
+        { name: "47. Vatikanstaten", lat: 41.9, lng: 12.45, cat: "Länder" },
 
-        // HUVUDSTÄDER
-        { name: "Stockholm", lat: 59.329, lng: 18.068, cat: "Huvudstäder" },
+        // HUVUDSTÄDER (KARTA 1)
+        { name: "Reykjavik", lat: 64.146, lng: -21.942, cat: "Huvudstäder" },
         { name: "Oslo", lat: 59.913, lng: 10.752, cat: "Huvudstäder" },
+        { name: "Stockholm", lat: 59.329, lng: 18.068, cat: "Huvudstäder" },
         { name: "Helsingfors", lat: 60.169, lng: 24.938, cat: "Huvudstäder" },
         { name: "Köpenhamn", lat: 55.676, lng: 12.568, cat: "Huvudstäder" },
+        { name: "Tallinn", lat: 59.437, lng: 24.753, cat: "Huvudstäder" },
+        { name: "Riga", lat: 56.949, lng: 24.105, cat: "Huvudstäder" },
+        { name: "Vilnius", lat: 54.687, lng: 25.279, cat: "Huvudstäder" },
+        { name: "Dublin", lat: 53.349, lng: -6.26, cat: "Huvudstäder" },
         { name: "London", lat: 51.507, lng: -0.127, cat: "Huvudstäder" },
-        { name: "Paris", lat: 48.856, lng: 2.352, cat: "Huvudstäder" },
-        { name: "Berlin", lat: 52.52, lng: 13.405, cat: "Huvudstäder" },
+        { name: "Lissabon", lat: 38.722, lng: -9.139, cat: "Huvudstäder" },
         { name: "Madrid", lat: 40.416, lng: -3.703, cat: "Huvudstäder" },
+        { name: "Paris", lat: 48.856, lng: 2.352, cat: "Huvudstäder" },
+        { name: "Bryssel", lat: 50.85, lng: 4.351, cat: "Huvudstäder" },
+        { name: "Amsterdam", lat: 52.367, lng: 4.904, cat: "Huvudstäder" },
+        { name: "Luxemburg", lat: 49.611, lng: 6.131, cat: "Huvudstäder" },
+        { name: "Berlin", lat: 52.52, lng: 13.405, cat: "Huvudstäder" },
+        { name: "Bern", lat: 46.948, lng: 7.447, cat: "Huvudstäder" },
+        { name: "Vaduz", lat: 47.141, lng: 9.521, cat: "Huvudstäder" },
+        { name: "Monaco", lat: 43.738, lng: 7.424, cat: "Huvudstäder" },
         { name: "Rom", lat: 41.902, lng: 12.496, cat: "Huvudstäder" },
-        { name: "Aten", lat: 37.983, lng: 23.727, cat: "Huvudstäder" },
+        { name: "Wien", lat: 48.208, lng: 16.373, cat: "Huvudstäder" },
+        { name: "Prag", lat: 50.075, lng: 14.437, cat: "Huvudstäder" },
         { name: "Warszawa", lat: 52.229, lng: 21.012, cat: "Huvudstäder" },
-        { name: "Kyiv", lat: 50.45, lng: 30.523, cat: "Huvudstäder" },
-
-        // BERGSKEDJOR
-        { name: "Alperna", lat: 46.5, lng: 9.5, cat: "Bergskedjor" },
-        { name: "Pyrenéerna", lat: 42.6, lng: 1.0, cat: "Bergskedjor" },
+        { name: "Minsk", lat: 53.9, lng: 27.566, cat: "Huvudstäder" },
+        { name: "Kiev (Kyjiv)", lat: 50.45, lng: 30.523, cat: "Huvudstäder" },
+        { name: "Bratislava", lat: 48.148, lng: 17.107, cat: "Huvudstäder" },
+        { name: "Budapest", lat: 47.497, lng: 19.04, cat: "Huvudstäder" },
+        { name: "Bukarest", lat: 44.432, lng: 26.102, cat: "Huvudstäder" },
+        { name: "Chișinău", lat: 47.01, lng: 28.863, cat: "Huvudstäder" },
+        { name: "Ljubljana", lat: 46.056, lng: 14.505, cat: "Huvudstäder" },
+        { name: "Zagreb", lat: 45.815, lng: 15.981, cat: "Huvudstäder" },
+        { name: "Sarajevo", lat: 43.856, lng: 18.413, cat: "Huvudstäder" },
+        { name: "Belgrad", lat: 44.786, lng: 20.448, cat: "Huvudstäder" },
+        { name: "Podgorica", lat: 42.43, lng: 19.263, cat: "Huvudstäder" },
+        { name: "Sofia", lat: 42.697, lng: 23.321, cat: "Huvudstäder" },
+        { name: "Tirana", lat: 41.327, lng: 19.818, cat: "Huvudstäder" },
+        { name: "Prishtinë", lat: 42.662, lng: 21.165, cat: "Huvudstäder" },
+        { name: "Skopje", lat: 41.998, lng: 21.425, cat: "Huvudstäder" },
+        { name: "Aten", lat: 37.983, lng: 23.727, cat: "Huvudstäder" },
+        { name: "Ankara", lat: 39.933, lng: 32.859, cat: "Huvudstäder" },
+        { name: "Valletta", lat: 35.898, lng: 14.514, cat: "Huvudstäder" },
+        { name: "Moskva", lat: 55.755, lng: 37.617, cat: "Huvudstäder" },
+        { name: "Nicosia", lat: 35.185, lng: 33.382, cat: "Huvudstäder" },
         {
-          name: "Skanderna (Fjällkedjan)",
-          lat: 63.0,
-          lng: 13.0,
-          cat: "Bergskedjor",
+          name: "Andorra la Vella",
+          lat: 42.506,
+          lng: 1.521,
+          cat: "Huvudstäder",
         },
-        { name: "Karpaterna", lat: 47.0, lng: 25.0, cat: "Bergskedjor" },
-        { name: "Apenninerna", lat: 43.0, lng: 12.5, cat: "Bergskedjor" },
-        { name: "Uralbergen", lat: 60.0, lng: 60.0, cat: "Bergskedjor" },
+        { name: "San Marino", lat: 43.936, lng: 12.446, cat: "Huvudstäder" },
 
-        // HAV & FLODER
-        { name: "Östersjön", lat: 57.0, lng: 20.0, cat: "Hav & Floder" },
-        { name: "Medelhavet", lat: 35.0, lng: 18.0, cat: "Hav & Floder" },
-        { name: "Nordsjön", lat: 56.0, lng: 3.0, cat: "Hav & Floder" },
-        { name: "Svarta havet", lat: 43.0, lng: 34.0, cat: "Hav & Floder" },
-        { name: "Norska havet", lat: 66.0, lng: 2.0, cat: "Hav & Floder" },
-        { name: "Donau", lat: 44.2, lng: 22.4, cat: "Hav & Floder" },
-        { name: "Rhen", lat: 50.1, lng: 7.6, cat: "Hav & Floder" },
-        { name: "Volga", lat: 53.0, lng: 49.0, cat: "Hav & Floder" },
-        { name: "Seine", lat: 48.9, lng: 2.2, cat: "Hav & Floder" },
+        // HAV, SJÖAR M.M. (KARTA 2: nr 1-13)
+        { name: "1. Norska havet", lat: 66.0, lng: 2.0, cat: "Hav & Sjöar" },
+        { name: "2. Nordsjön", lat: 56.0, lng: 3.0, cat: "Hav & Sjöar" },
+        { name: "3. Östersjön", lat: 57.0, lng: 20.0, cat: "Hav & Sjöar" },
+        { name: "4. Medelhavet", lat: 35.0, lng: 18.0, cat: "Hav & Sjöar" },
+        { name: "5. Svarta havet", lat: 43.0, lng: 34.0, cat: "Hav & Sjöar" },
+        { name: "6. Kaspiska havet", lat: 42.0, lng: 51.0, cat: "Hav & Sjöar" },
+        { name: "7. Atlanten", lat: 50.0, lng: -20.0, cat: "Hav & Sjöar" },
+        {
+          name: "8. Engelska kanalen",
+          lat: 50.2,
+          lng: -0.5,
+          cat: "Hav & Sjöar",
+        },
+        {
+          name: "9. Adriatiska havet",
+          lat: 42.5,
+          lng: 15.5,
+          cat: "Hav & Sjöar",
+        },
+        { name: "10. Egeiska havet", lat: 38.5, lng: 25.0, cat: "Hav & Sjöar" },
+        { name: "11. Ladoga", lat: 60.9, lng: 31.5, cat: "Hav & Sjöar" },
+        {
+          name: "12. Gibraltarsund",
+          lat: 35.96,
+          lng: -5.6,
+          cat: "Hav & Sjöar",
+        },
+        { name: "13. Bosporen", lat: 41.1, lng: 29.1, cat: "Hav & Sjöar" },
+
+        // FLODER (KARTA 2: nr 14-22)
+        { name: "14. Themsen", lat: 51.5, lng: -0.6, cat: "Floder" },
+        { name: "15. Loire", lat: 47.2, lng: -1.5, cat: "Floder" },
+        { name: "16. Marne", lat: 48.9, lng: 2.7, cat: "Floder" },
+        { name: "17. Donau", lat: 44.2, lng: 22.4, cat: "Floder" },
+        { name: "18. Rhen", lat: 50.1, lng: 7.6, cat: "Floder" },
+        { name: "19. Elbe", lat: 52.5, lng: 11.8, cat: "Floder" },
+        { name: "20. Wisła", lat: 52.4, lng: 21.0, cat: "Floder" },
+        { name: "21. Volga", lat: 56.5, lng: 36.0, cat: "Floder" },
+        { name: "22. Dnjepr", lat: 48.5, lng: 35.0, cat: "Floder" },
+
+        // ÖAR (KARTA 2: nr 23-29)
+        { name: "23. Korsika", lat: 42.15, lng: 9.15, cat: "Öar" },
+        { name: "24. Sardinien", lat: 40.12, lng: 9.01, cat: "Öar" },
+        { name: "25. Sicilien", lat: 37.6, lng: 14.01, cat: "Öar" },
+        { name: "26. Kreta", lat: 35.24, lng: 24.8, cat: "Öar" },
+        { name: "27. Cypern", lat: 35.0, lng: 33.0, cat: "Öar" },
+        { name: "28. Balearerna/Mallorca", lat: 39.6, lng: 2.9, cat: "Öar" },
+        { name: "29. Färöarna", lat: 61.9, lng: -6.8, cat: "Öar" },
+
+        // BERGSKEDJOR (KARTA 2: nr 30-36)
+        { name: "30. Skanderna", lat: 63.0, lng: 13.0, cat: "Bergskedjor" },
+        { name: "31. Pyrenéerna", lat: 42.6, lng: 1.0, cat: "Bergskedjor" },
+        { name: "32. Alperna", lat: 46.5, lng: 9.5, cat: "Bergskedjor" },
+        { name: "33. Appenninerna", lat: 43.0, lng: 12.5, cat: "Bergskedjor" },
+        { name: "34. Karpaterna", lat: 47.0, lng: 25.0, cat: "Bergskedjor" },
+        { name: "35. Uralbergen", lat: 60.0, lng: 60.0, cat: "Bergskedjor" },
+        { name: "36. Kaukasus", lat: 42.5, lng: 44.0, cat: "Bergskedjor" },
       ];
 
       let map, currentCategoryList, currentItem, marker;
@@ -271,7 +388,7 @@
         dropdown.innerHTML = '<option value="">-- Välj ett svar --</option>';
 
         const sortedNames = [...currentCategoryList].sort((a, b) =>
-          a.name.localeCompare(b.name),
+          a.name.localeCompare(b.name, "sv", { numeric: true }),
         );
         sortedNames.forEach((loc) => {
           const opt = document.createElement("option");
@@ -295,14 +412,12 @@
       }
 
       function goBack() {
-        // Återställ allt UI
         document.getElementById("start-menu").classList.remove("hidden");
         document.getElementById("controls").classList.add("hidden");
         document.getElementById("stat-bar").classList.add("hidden");
         document.getElementById("back-btn").classList.add("hidden");
         document.getElementById("result-screen").classList.add("hidden");
 
-        // Ta bort markör och nollställ karta över Europa
         if (marker) map.removeLayer(marker);
         map.flyTo([54, 15], 4);
       }
@@ -322,12 +437,25 @@
         marker = L.marker([currentItem.lat, currentItem.lng]).addTo(map);
 
         let zoomLevel = 5;
-        if (currentItem.cat === "Huvudstäder") zoomLevel = 6;
         if (
-          currentItem.cat === "Hav & Floder" &&
-          !currentItem.name.includes("Seine")
+          currentItem.cat === "Huvudstäder" ||
+          currentItem.cat === "Floder" ||
+          currentItem.cat === "Öar"
         )
-          zoomLevel = 4;
+          zoomLevel = 6;
+        if (
+          currentItem.name.includes("Vatikanstaten") ||
+          currentItem.name.includes("San Marino") ||
+          currentItem.name.includes("Monaco") ||
+          currentItem.name.includes("Andorra") ||
+          currentItem.name.includes("Liechtenstein") ||
+          currentItem.name.includes("Malta") ||
+          currentItem.name.includes("Gibraltarsund") ||
+          currentItem.name.includes("Bosporen")
+        ) {
+          zoomLevel = 8;
+        }
+        if (currentItem.cat === "Hav & Sjöar" && zoomLevel === 5) zoomLevel = 4;
 
         map.flyTo([currentItem.lat, currentItem.lng], zoomLevel);
       }
