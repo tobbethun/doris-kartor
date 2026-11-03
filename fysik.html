@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fysikprov – Termodynamik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="bg-slate-900 text-slate-100 min-h-screen flex flex-col justify-between font-sans"
+  >
+    <!-- Header -->
+    <header
+      class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50"
+    >
+      <div
+        class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between"
+      >
+        <a
+          href="index.html"
+          class="inline-flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm font-medium"
+        >
+          <i class="fa-solid fa-arrow-left"></i> Tillbaka till Startsidan
+        </a>
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-amber-400 animate-pulse"></span>
+          <span
+            class="text-xs font-semibold uppercase tracking-wider text-amber-400"
+            >Fysik: Termodynamik</span
+          >
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main
+      class="max-w-3xl mx-auto px-6 py-8 flex-1 w-full flex flex-col justify-center"
+      id="quiz-container"
+    >
+      <!-- Progress Bar & Status -->
+      <div class="mb-6">
+        <div
+          class="flex justify-between items-center mb-2 text-xs font-semibold text-slate-400"
+        >
+          <span id="question-number">Fråga 1 av 15</span>
+          <span id="score-counter">Poäng: 0</span>
+        </div>
+        <div
+          class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden border border-slate-700/50"
+        >
+          <div
+            id="progress-bar"
+            class="bg-amber-400 h-full w-0 transition-all duration-300"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div
+        class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 sm:p-8 shadow-xl"
+      >
+        <span
+          id="category-badge"
+          class="inline-block px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 text-xs font-semibold rounded-full mb-4"
+        >
+          Kategori
+        </span>
+        <h2
+          id="question-text"
+          class="text-xl sm:text-2xl font-bold text-white mb-6 leading-snug"
+        >
+          Laddar fråga...
+        </h2>
+
+        <!-- Options -->
+        <div id="options-container" class="space-y-3">
+          <!-- Dynamiskt påfyllda knappar -->
+        </div>
+
+        <!-- Explanation / Feedback Box -->
+        <div
+          id="explanation-box"
+          class="hidden mt-6 p-4 rounded-xl border text-sm leading-relaxed"
+        >
+          <!-- Dynamisk förklaring -->
+        </div>
+
+        <!-- Next Button -->
+        <div class="mt-6 flex justify-end">
+          <button
+            id="next-btn"
+            onclick="nextQuestion()"
+            class="hidden bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-lg shadow-indigo-600/30 items-center gap-2"
+          >
+            Nästa fråga <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Summary Screen (Dold från början) -->
+    <main
+      id="summary-container"
+      class="hidden max-w-3xl mx-auto px-6 py-12 flex-1 w-full text-center"
+    >
+      <div
+        class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-8 sm:p-10 shadow-2xl"
+      >
+        <div
+          class="w-20 h-20 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-4xl mx-auto mb-6"
+        >
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold text-white mb-2">
+          Provet är klart!
+        </h2>
+        <p class="text-slate-400 mb-6">
+          Här är ditt resultat på Termodynamik-quizzet:
+        </p>
+
+        <div
+          class="bg-slate-900/60 border border-slate-700/50 rounded-xl p-6 mb-8 max-w-sm mx-auto"
+        >
+          <div
+            class="text-5xl font-extrabold text-amber-400 mb-2"
+            id="final-score"
+          >
+            0 / 15
+          </div>
+          <div class="text-sm text-slate-400 font-medium" id="final-percentage">
+            0% rätt
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <button
+            onclick="restartQuiz()"
+            class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20"
+          >
+            <i class="fa-solid fa-rotate-right mr-2"></i> Gör om provet
+          </button>
+          <a
+            href="index.html"
+            class="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-6 py-3 rounded-xl transition-all border border-slate-600 flex items-center justify-center"
+          >
+            <i class="fa-solid fa-house mr-2"></i> Tillbaka till startsidan
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer
+      class="border-t border-slate-800 py-4 text-center text-xs text-slate-500"
+    >
+      <p>© Doris Quizportal – Fysik</p>
+    </footer>
+
+    <!-- Quiz Logic & Questions -->
+    <script>
+      const questions = [
+        {
+          category: "Massa",
+          question:
+            "Vad är massa och vilken enhet mäter vi den i inom fysiken?",
+          options: [
+            "Massa är hur mycket plats något tar och mäts i liter (L).",
+            "Massa är hur mycket materia (atomer) ett föremål består av och mäts i kilogram (kg).",
+            "Massa är dragningskraften på ett föremål och mäts i Newton (N).",
+            "Massa förändras beroende på vilken planet man befinner sig på.",
+          ],
+          correct: 1,
+          explanation:
+            "Massa handlar om hur mycket materia (atomer) ett objekt innehåller. Grundenheten är kilogram (kg). Massa ändras inte oavsett om du är på jorden eller månen!",
+        },
+        {
+          category: "Massa & Värme",
+          question: "Vad händer med ett ämnes massa när det värms upp?",
+          options: [
+            "Massan ökar eftersom värme väger något.",
+            "Massan minskar eftersom atomerna blir lättare.",
+            "Massan är helt oförändrad eftersom antalet atomer fortfarande är detsamma.",
+            "Massan förvandlas helt till energi.",
+          ],
+          correct: 2,
+          explanation:
+            "Massan ändras INTE när någonting värms upp! Det är samma antal atomer kvar, de rör sig bara snabbare och tar större plats (volymen ökar).",
+        },
+        {
+          category: "Volym",
+          question: "Vad är volym och hur påverkas den oftast av värme?",
+          options: [
+            "Volym är hur tungt något är. När det värms blir det lättare.",
+            "Volym är hur mycket plats något tar. När ett ämne värms utvidgas det och volymen ökar.",
+            "Volym mäts i Newton och minskar vid uppvärmning.",
+            "Volym är antalet molekyler i ett ämne och påverkas inte alls av temperatur.",
+          ],
+          correct: 1,
+          explanation:
+            "Volym är ett mått på hur stor plats ett föremål tar (mäts f.ex. i m³, dm³ eller liter). När ämnen värms rör sig molekylerna mer och knuffar varandra ifrån sig – volymen ökar (värmeexpansion).",
+        },
+        {
+          category: "Densitet",
+          question: "Vad är densitet och hur beräknas den?",
+          options: [
+            "Densitet är täthet (hur tätt atomerna sitter). Formeln är Densitet = Massa / Volym.",
+            "Densitet är tyngdkraft och beräknas som Massa × Volym.",
+            "Densitet är samma sak som volym och mäts i liter per sekund.",
+            "Densitet beräknas genom att ta Volym dividerat med Massa.",
+          ],
+          correct: 0,
+          explanation:
+            "Densitet (täthet) beskriver hur mycket massa som ryms på en viss volym. Formeln är p = m / V (t.ex. g/cm³ eller kg/dm³).",
+        },
+        {
+          category: "Densitet & Värme",
+          question:
+            "Vad händer med densiteten hos en gas eller vätska när den värms upp?",
+          options: [
+            "Densiteten ökar eftersom varm luft är tyngre.",
+            "Densiteten förändras inte alls.",
+            "Densiteten minskar eftersom volymen ökar men massan är densamma.",
+            "Densiteten blir noll.",
+          ],
+          correct: 2,
+          explanation:
+            "När ett ämne värms ökar volymen medan massan är kvar. Eftersom samma massa nu tar större plats blir tätheten lägre (densiteten minskar). Det är därför varm luft och varmt vatten stiger uppåt!",
+        },
+        {
+          category: "Atomer & Temperatur",
+          question:
+            "Vad är temperatur på ett molekylärt plan och vad innebär den absoluta nollpunkten?",
+          options: [
+            "Temperatur visar hur tunga molekylerna är. Absolut nollpunkt är 0°C.",
+            "Temperatur är ett mått på molekylernas rörelse. Vid den absoluta nollpunkten (-273,15°C / 0 K) står alla molekyler helt stilla.",
+            "Temperatur är mängden strålning från solen. Absolut nollpunkt är när solen slocknar.",
+            "Temperatur anger hur snabbt atomer förvandlas till gas.",
+          ],
+          correct: 1,
+          explanation:
+            "Värme är rörelse hos atomer/molekyler. Ju högre temperatur, desto snabbare rör de sig. Vid den absoluta nollpunkten (0 Kelvin eller -273,15 °C) avstannar all molekylrörelse helt.",
+        },
+        {
+          category: "Vattens egenskaper",
+          question:
+            "Vad är vattens speciella egenskap när det gäller densitet?",
+          options: [
+            "Vatten har sin högsta densitet vid 0°C.",
+            "Vatten expanderar när det blir varmt men krymper konstant ju kallare det blir ned till frysampunkten.",
+            "Vatten har sin högsta densitet vid +4°C. Is tar större plats än flytande vatten och flyter därför.",
+            "Vatten kan inte frysa om det har hög massa.",
+          ],
+          correct: 2,
+          explanation:
+            "Vatten har sin högsta densitet vid +4°C! När vatten fryser till is lägger sig molekylerna i ett kristallmönster som tar MER plats än det flytande vattnet. Därför har is lägre densitet och flyter på vatten, vilket gör att sjöar inte bottenfryser!",
+        },
+        {
+          category: "Fasövergångar",
+          question: "Vad kallas fasövergången när en gas blir till vätska?",
+          options: ["Avdunstning", "Stelning", "Kondensering", "Sublimering"],
+          correct: 2,
+          explanation:
+            "När en gas kyls ner och blir flytande kallas det kondensering (t.ex. när vattenånga blir till droppar på en kall spegel).",
+        },
+        {
+          category: "Värmespridning",
+          question: "Vilka är de tre sätten som värme kan spridas på?",
+          options: [
+            "Friktion, gravitationskraft och tryck",
+            "Ledning, strömning och strålning",
+            "Expansion, kontraktion och isolering",
+            "Reflektion, absorption och uppvärmning",
+          ],
+          correct: 1,
+          explanation:
+            "De tre sätten värme sprids på är: 1) Ledning (genom fasta ämnen t.ex. metallsked), 2) Strömning (vätskor/gaser som rör sig) och 3) Strålning (elektromagnetisk strålning från t.ex. solen eller en eld utan medium).",
+        },
+        {
+          category: "Isolering & Termos",
+          question:
+            "Hur förhindrar en termos att värme smiter ut eller kommer in?",
+          options: [
+            "Den har ett tjockt lager av metall som leder bort kylan.",
+            "Den har vakuum (inget luft/ämne) mellan dubbla väggar som stoppar ledning och strömning, samt blanka ytor som reflekterar strålning.",
+            "Den producerar egen värmeenergi med ett inbyggt batteri.",
+            "Den stoppar bara strålning genom sin svarta färg.",
+          ],
+          correct: 1,
+          explanation:
+            "Vakuum stoppar både ledning och strömning (eftersom det inte finns några atomer som kan leda eller strömma). De silvriga/blanka väggarna reflekterar dessutom tillbaka värmestrålningen.",
+        },
+        {
+          category: "Klimat",
+          question: "Vad innebär jordens strålningsbalans?",
+          options: [
+            "Att jorden absorberar all solstrålning utan att sända ut något.",
+            "Balansen mellan den solstrålning som jorden tar emot och den värmestrålning jorden sänder ut i rymden.",
+            "Att det råder lika varmt klimat vid polerna som vid ekvatorn.",
+            "Att koldioxidstoppet gör att ingen strålning når jorden.",
+          ],
+          correct: 1,
+          explanation:
+            "Jordens strålningsbalans är jämvikten mellan inkommande solenergi och utgående värmestrålning. Om balansen rubbas (t.ex. genom fler växthusgaser) blir jorden varmare.",
+        },
+        {
+          category: "Växthuseffekten",
+          question:
+            "Vad är växthuseffekten och varför är den naturliga växthuseffekten nödvändig?",
+          options: [
+            "Den är ett konstgjort problem som skapats helt av människor på 1900-talet.",
+            "Växthusgaser (som vattenånga och koldioxid) fångar upp delar av utgående värmestrålning. Utan den naturliga effekten skulle jorden ha ca -18°C i medeltemperatur.",
+            "Den gör att UV-strålning stoppas helt från att nå marken.",
+            "Den uppstår bara i växthus där man odlar tomater.",
+          ],
+          correct: 1,
+          explanation:
+            "Den naturliga växthuseffekten fungerar som ett täcke kring jorden och gör den beboelig (ca +15°C i snitt istället för -18°C). Problemet är den förstärkta växthuseffekten orsakad av mänskliga utsläpp.",
+        },
+        {
+          category: "Väder & Vind",
+          question: "Hur uppstår vindar?",
+          options: [
+            "Vindar uppstår när jorden snurrar så snabbt att luften kastas iväg.",
+            "Vindar uppstår på grund av skillnader i lufttryck. Varm luft stiger (lågtryck) och kall luft strömmar till för att fylla tomrummet.",
+            "Vindar bildas när regnmoln krockar med bergsområden.",
+            "Vindar skapas enbart av havsströmmar.",
+          ],
+          correct: 1,
+          explanation:
+            "Solen värmer upp marken -> luften värms och stiger (lågtryck bildas). Kallare luft blåser in från områden med högre tryck för att jämna ut skillnaden. Det är vad vi känner som vind!",
+        },
+        {
+          category: "Sjöbris",
+          question: "Hur fungerar en sjöbris en solig sommardag?",
+          options: [
+            "Det blåser från land ut mot havet på dagen eftersom havet blir varmare än land.",
+            "Det blåser från havet in mot land på dagen eftersom marken värms upp snabbare än havet, vilket får luften över land att stiga.",
+            "Det är en vind som bara uppstår under natten.",
+            "Sjöbris beror på månar och tidvatten.",
+          ],
+          correct: 1,
+          explanation:
+            "På dagen värms marken upp snabbare än havet. Luften över land stiger. Kallare och tätare luft över havet strömmar då in mot land -> Sjöbris (blåser FRÅN sjön/havet).",
+        },
+        {
+          category: "Passad- & Monsunvindar",
+          question: "Vad kännetecknar passadvindar?",
+          options: [
+            "De är tillfälliga stormar vid Nordpolen.",
+            "Ständiga vindar som blåser från vändkretsarna in mot ekvatorn p.g.a. stark uppvärmning vid ekvatorn.",
+            "Vindar som bara blåser på vintern i Sverige.",
+            "Vindar som skapas av elproduktionen i vindkraftverk.",
+          ],
+          correct: 1,
+          explanation:
+            "Vid ekvatorn är soluppvärmningen starkast. Luften stiger och skapar ett permanent lågtrycksbälte. Luft från norr och söder (vändkretsarna) strömmar regelbundet in mot ekvatorn – dessa kallas passadvindar.",
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+      let answered = false;
+
+      function loadQuestion() {
+        answered = false;
+        const q = questions[currentQuestionIndex];
+
+        document.getElementById("category-badge").innerText = q.category;
+        document.getElementById("question-text").innerText = q.question;
+        document.getElementById("question-number").innerText =
+          `Fråga ${currentQuestionIndex + 1} av ${questions.length}`;
+        document.getElementById("score-counter").innerText = `Poäng: ${score}`;
+
+        const progressPct = (currentQuestionIndex / questions.length) * 100;
+        document.getElementById("progress-bar").style.width = `${progressPct}%`;
+
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        const explanationBox = document.getElementById("explanation-box");
+        explanationBox.className =
+          "hidden mt-6 p-4 rounded-xl border text-sm leading-relaxed";
+        explanationBox.innerHTML = "";
+
+        document.getElementById("next-btn").classList.add("hidden");
+
+        q.options.forEach((opt, idx) => {
+          const btn = document.createElement("button");
+          btn.className =
+            "w-full text-left p-4 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700/80 transition-all font-medium text-slate-200 flex items-start gap-3";
+          btn.innerHTML = `<span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-slate-700 text-xs text-slate-300 font-bold shrink-0">${String.fromCharCode(65 + idx)}</span> <span>${opt}</span>`;
+          btn.onclick = () => selectOption(idx);
+          optionsContainer.appendChild(btn);
+        });
+      }
+
+      function selectOption(index) {
+        if (answered) return;
+        answered = true;
+
+        const q = questions[currentQuestionIndex];
+        const buttons = document.getElementById("options-container").children;
+        const explanationBox = document.getElementById("explanation-box");
+
+        if (index === q.correct) {
+          score++;
+          buttons[index].className =
+            "w-full text-left p-4 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-emerald-300 font-semibold flex items-start gap-3";
+          explanationBox.className =
+            "mt-6 p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 text-sm leading-relaxed";
+          explanationBox.innerHTML = `<strong class="text-emerald-400 block mb-1"><i class="fa-solid fa-circle-check"></i> Rätt svar!</strong> ${q.explanation}`;
+        } else {
+          buttons[index].className =
+            "w-full text-left p-4 rounded-xl border-2 border-rose-500 bg-rose-500/10 text-rose-300 font-semibold flex items-start gap-3";
+          buttons[q.correct].className =
+            "w-full text-left p-4 rounded-xl border-2 border-emerald-500/60 bg-emerald-500/10 text-emerald-300 font-semibold flex items-start gap-3";
+          explanationBox.className =
+            "mt-6 p-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-200 text-sm leading-relaxed";
+          explanationBox.innerHTML = `<strong class="text-rose-400 block mb-1"><i class="fa-solid fa-circle-xmark"></i> Fel svar</strong> ${q.explanation}`;
+        }
+
+        document.getElementById("score-counter").innerText = `Poäng: ${score}`;
+        explanationBox.classList.remove("hidden");
+
+        const nextBtn = document.getElementById("next-btn");
+        nextBtn.classList.remove("hidden");
+        nextBtn.classList.add("inline-flex");
+      }
+
+      function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+          loadQuestion();
+        } else {
+          showSummary();
+        }
+      }
+
+      function showSummary() {
+        document.getElementById("quiz-container").classList.add("hidden");
+        const summaryContainer = document.getElementById("summary-container");
+        summaryContainer.classList.remove("hidden");
+
+        const percentage = Math.round((score / questions.length) * 100);
+        document.getElementById("final-score").innerText =
+          `${score} / ${questions.length}`;
+        document.getElementById("final-percentage").innerText =
+          `${percentage}% rätt`;
+      }
+
+      function restartQuiz() {
+        currentQuestionIndex = 0;
+        score = 0;
+        document.getElementById("summary-container").classList.add("hidden");
+        document.getElementById("quiz-container").classList.remove("hidden");
+        loadQuestion();
+      }
+
+      // Starta quizzet direkt när sidan laddas
+      loadQuestion();
+    </script>
+  </body>
+</html>
